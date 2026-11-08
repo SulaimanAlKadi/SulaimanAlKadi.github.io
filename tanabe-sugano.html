@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sulaiman AlKadi - D4h Tanabe-Sugano diagrams</title>
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="48x48" href="favicon-48.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="description" content="Tanabe-Sugano diagrams for d1-d9 ions in tetragonal (D4h) ligand fields, computed in the browser.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono&display=swap">
+<link rel="stylesheet" href="style.css?v=11">
+<link rel="stylesheet" href="ts-d4h/ts.css?v=14">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap">
+    <a class="brand" href="index.html">Sulaiman AlKadi</a>
+    <nav aria-label="Site">
+      <a href="index.html">Home</a>
+      <a href="research.html">Research</a>
+      <a href="tools.html" aria-current="page">Tools</a>
+      <a href="cv.html">CV</a>
+    </nav>
+  </div>
+</header>
+
+<section class="title-band"><div class="wrap"><h1>D<sub>4h</sub> Tanabe&ndash;Sugano</h1></div></section>
+<div class="strip"><div class="wrap">Back to <a href="tools.html">Tools</a>.</div></div>
+
+<main class="wrap">
+
+  <details class="adv conv" id="conv">
+    <summary>Conventions</summary>
+    <div class="inner">
+      <ul>
+        <li>All inputs are in units of B, except for the AOM values, which are entered in cm<sup>&minus;1</sup>. Ratios between parameters (Dq, Ds, Dt) are unitless.</li>
+        <li>For the electron-repulsion terms, the Slater&ndash;Condon parameter F<sub>0</sub> (part of Racah A) shifts every state of a given d<sup>n</sup> configuration by the same amount, so it is dropped (B = F<sub>2</sub> &minus; 5F<sub>4</sub>, C = 35F<sub>4</sub>). If you want the full Racah expressions, you will need to add this term back in; for plotting purposes it is essentially just an offset, so leaving it out makes things easier.</li>
+        <li>This way of calculating energies does not include spin&ndash;orbit coupling. SOC makes these calculations substantially more difficult, so although I might implement it at some point, it is not currently included.</li>
+        <li>Condon&ndash;Shortley phases are used for the complex d orbitals, so keep this in mind if some sign conventions appear unusual.</li>
+        <li>One-electron energies are measured from the barycenter: b<sub>1g</sub> (x<sup>2</sup>&minus;y<sup>2</sup>) 6Dq + 2Ds &minus; Dt, a<sub>1g</sub> (z<sup>2</sup>) 6Dq &minus; 2Ds &minus; 6Dt, b<sub>2g</sub> (xy) &minus;4Dq + 2Ds &minus; Dt, e<sub>g</sub> (xz, yz) &minus;4Dq &minus; Ds + 4Dt. Positive Ds and Dt correspond to weaker axial ligands (elongation along z); some texts use the opposite sign of Ds.</li>
+        <li>States are labeled <sup>2S+1</sup>&Gamma; in D<sub>4h</sub> and numbered (k) in order of energy when a label repeats. The blocks come from M<sub>L</sub> mod 4 (0: A<sub>1g</sub>/A<sub>2g</sub>; 2: B<sub>1g</sub>/B<sub>2g</sub>; &plusmn;1: E<sub>g</sub>), A<sub>1</sub>/A<sub>2</sub> and B<sub>1</sub>/B<sub>2</sub> from the C<sub>2</sub>&prime;(x) character, and S from &lang;S<sup>2</sup>&rang;. Every state is gerade.</li>
+        <li>Each state is shown with its leading strong-field configuration (b<sub>2g</sub>, e<sub>g</sub>, a<sub>1g</sub>, b<sub>1g</sub> occupations; t<sub>2g</sub>, e<sub>g</sub> on the O<sub>h</sub> cut) and its weight.</li>
+      </ul>
+    </div>
+  </details>
+
+  <!-- ------------------------------------------------------------ 1. cut -->
+  <section class="step" id="ts-cut">
+    <h2><span class="n">1</span> Energy levels along a cut</h2>
+    <div class="optrow">
+      <label><span>d<sup>n</sup></span> <select id="ts-n">
+        <option value="1">d1</option><option value="2" selected>d2</option><option value="3">d3</option>
+        <option value="4">d4</option><option value="5">d5</option><option value="6">d6</option>
+        <option value="7">d7</option><option value="8">d8</option><option value="9">d9</option>
+      </select></label>
+      <label>C/B <input id="ts-cb" type="number" step="0.05" min="0" value="4.5"></label>
+      <label>Cut <select id="ts-mode"><option value="ts">Tanabe&ndash;Sugano: fixed Ds/Dq, Dt/Dq</option><option value="corr">Correlation: fixed Dq, distortion</option></select></label>
+      <label>Units <select id="ts-u"><option value="B">B</option><option value="cm">cm&#8315;&sup1;</option></select></label>
+      <label>B = <input id="ts-bcm" type="number" step="10" min="1" value="800"> cm&#8315;&sup1;</label>
+    </div>
+    <div class="optrow">
+      <label class="ts-only">Ds/Dq <input id="ts-rs" type="number" step="0.05" value="0"></label>
+      <label class="ts-only">Dt/Dq <input id="ts-rt" type="number" step="0.05" value="0"></label>
+      <label class="ts-only">Dq/B up to <input id="ts-dq" type="number" step="0.5" min="0.5" value="4"></label>
+      <label class="corr-only" hidden>Dq/B <input id="ts-cq" type="number" step="0.1" value="2"></label>
+      <label class="corr-only" hidden>right end: Ds/B <input id="ts-cs" type="number" step="0.1" value="1"></label>
+      <label class="corr-only" hidden>Dt/B <input id="ts-ct" type="number" step="0.1" value="0.6"></label>
+      <label>Points <input id="ts-pts" type="number" step="50" min="21" max="2001" value="301"></label>
+      <label>E/B up to <input id="ts-emax" type="number" step="10" min="1" value="80" placeholder="auto"></label>
+      <label class="ts-only">x axis <select id="ts-x"><option value="delta">&Delta; = 10Dq</option><option value="dq">Dq</option></select></label>
+    </div>
+    <details class="adv" id="aom">
+      <summary>Angular overlap model: trans-MA<sub>4</sub>L<sub>2</sub> &rarr; Dq, Ds, Dt</summary>
+      <div class="inner">
+        <div class="optrow">
+          <label>e<sub>&sigma;</sub>(eq) <input id="aom-se" type="number" step="100" value="6000"></label>
+          <label>e<sub>&pi;</sub>(eq) <input id="aom-pe" type="number" step="100" value="1000"></label>
+          <label>e<sub>&sigma;</sub>(ax) <input id="aom-sa" type="number" step="100" value="4000"></label>
+          <label>e<sub>&pi;</sub>(ax) <input id="aom-pa" type="number" step="100" value="500"></label>
+          <label>in <select id="aom-u"><option value="cm">cm&#8315;&sup1; (with B above)</option><option value="B">units of B</option></select></label>
+        </div>
+        <p class="cap">Four equatorial ligands A on &plusmn;x, &plusmn;y, two axial ligands L on &plusmn;z; &delta; = e(eq) &minus; e(ax). 10Dq = 3e<sub>&sigma;</sub>(eq) &minus; 4e<sub>&pi;</sub>(eq), Ds = (2/7)(&delta;<sub>&sigma;</sub> + &delta;<sub>&pi;</sub>), Dt = (2/35)(3&delta;<sub>&sigma;</sub> &minus; 4&delta;<sub>&pi;</sub>). Weaker axial ligands (&delta; &gt; 0) give Ds, Dt &gt; 0.</p>
+        <p class="ss-status" id="aom-out"></p>
+        <div class="loadrow">
+          <button class="btn sm" id="aom-ts" type="button">Tanabe&ndash;Sugano cut through this point</button>
+          <button class="btn sm" id="aom-corr" type="button">Correlation diagram ending at this point</button>
+        </div>
+      </div>
+    </details>
+    <div class="optrow">
+      <button class="btn sm" id="ts-oh" type="button">Octahedral (Ds = Dt = 0)</button>
+      <label><input type="checkbox" id="ts-gs" checked> Energies from the ground state</label>
+      <label><input type="checkbox" id="ts-lab" checked> Label curves</label>
+      <span class="ts-spins" id="ts-spins"></span>
+    </div>
+    <p class="ss-status" id="ts-status">Loading.</p>
+    <div class="plot"><div id="ts-plot" class="ts-plot"></div></div>
+    <div class="loadrow exp">
+      <button class="btn sm" id="ts-csv" type="button">Download CSV</button>
+      <button class="btn sm" id="ts-png" type="button">Download PNG</button>
+    </div>
+    <p class="cap" id="ts-conv">Energies in units of B, with C/B as set and F<sub>0</sub> dropped. Along the cut Ds = (Ds/Dq)&middot;Dq and Dt = (Dt/Dq)&middot;Dq; Ds, Dt &gt; 0 means weaker axial ligands (elongation along z). Each curve is the k-th state of one (2S+1, &Gamma;) block of D<sub>4h</sub>; at Ds = Dt = 0 the curves are the O<sub>h</sub> levels. Color marks the spin multiplicity. The correlation diagram holds Dq fixed and runs (Ds, Dt) = &tau;&middot;(right-end values) from &tau; = &minus;1 through the O<sub>h</sub> point &tau; = 0 to &tau; = 1. In cm<sup>&minus;1</sup> mode every energy is multiplied by B, here and in sections 2 and 3; the inputs stay in units of B. The CSV holds the curves shown, in the units shown.</p>
+  </section>
+
+  <!-- ------------------------------------------------------- 2. surfaces -->
+  <section class="step" id="s3">
+    <h2><span class="n">2</span> Energy surfaces over a plane</h2>
+    <div class="optrow">
+      <label>Plane <select id="s3-plane">
+        <option value="dq">Fixed Dq/B: Ds/B &times; Dt/B</option>
+        <option value="ratio">Fixed Ds/Dq: Dq/B &times; Dt/Dq</option>
+        <option value="custom">Custom: P0 + s&middot;u + t&middot;v</option>
+      </select></label>
+      <label class="s3-std"><span id="s3-q-name">Dq/B</span> <input id="s3-q" type="number" step="0.1"></label>
+      <label class="s3-std"><span id="s3-a-name">Ds/B</span> from <input id="s3-a0" type="number" step="0.1"> to <input id="s3-a1" type="number" step="0.1"></label>
+      <label class="s3-std"><span id="s3-b-name">Dt/B</span> from <input id="s3-b0" type="number" step="0.1"> to <input id="s3-b1" type="number" step="0.1"></label>
+      <label class="s3-cus" hidden>P0 (Dq, Ds, Dt)/B <input id="s3-o" type="text" class="vec"></label>
+      <label class="s3-cus" hidden>u <input id="s3-u" type="text" class="vec"></label>
+      <label class="s3-cus" hidden>v <input id="s3-v" type="text" class="vec"></label>
+    </div>
+    <div class="optrow">
+      <label>Grid <input id="s3-g" type="number" step="10" min="11" max="101"> &times; same</label>
+      <label>E/B up to <input id="s3-z" type="number" step="10" min="1" placeholder="auto"></label>
+      <label>Opacity <input id="s3-op" type="range" min="0.2" max="1" step="0.05"></label>
+      <label><input type="checkbox" id="s3-gs"> Energies from the ground state</label>
+      <label><input type="checkbox" id="s3-ci"> Find conical intersections</label>
+      <button class="btn primary sm" id="s3-go" type="button">Compute surfaces</button>
+      <progress id="s3-prog" max="1" value="0" hidden></progress>
+    </div>
+    <p class="ss-status" id="s3-status">d<sup>n</sup> and C/B are taken from section 1.</p>
+    <div class="s3-grid">
+      <div class="plot"><div id="s3-plot" class="s3-plot"></div></div>
+      <div class="s3-panel">
+        <div class="s3-tools">
+          <label>Group by <select id="s3-grp"><option value="spin">spin</option><option value="irrep">D<sub>4h</sub> label</option></select></label>
+          <div class="s3-btns">
+            <button class="btn sm" id="s3-all" type="button">All</button>
+            <button class="btn sm" id="s3-none" type="button">None</button>
+            <button class="btn sm" id="s3-low" type="button">Lowest</button><input id="s3-N" type="number" min="1" max="200" step="1" aria-label="How many of the lowest surfaces">
+            <button class="btn sm" id="s3-gsr" type="button">Ground states</button>
+          </div>
+        </div>
+        <div id="s3-list" class="s3-list"><p class="muted">Compute the surfaces to list them.</p></div>
+      </div>
+    </div>
+    <div class="loadrow exp">
+      <button class="btn sm" id="s3-csv" type="button">Download CSV (shown surfaces)</button>
+      <button class="btn sm" id="s3-png" type="button">Download PNG</button>
+      <a class="btn sm" id="s3-rendered" href="tanabe-sugano-rendered.html">Rendered views (Manim)</a>
+    </div>
+    <p class="cap">Each surface is the k-th state of one (2S+1, &Gamma;) block of D<sub>4h</sub>, so it keeps its identity over the whole plane: surfaces of different blocks cross freely, surfaces of the same block touch only at conical intersections. &ldquo;Lowest&rdquo; ranks surfaces by their minimum on the plane; &ldquo;Ground states&rdquo; selects every surface that is the ground state somewhere on it. Color marks the spin multiplicity; within it, shading runs from dark to light with energy on one scale for all surfaces, and the mesh lines follow the grid.</p>
+    <h3 class="s3-h">Conical intersections</h3>
+    <div id="s3-cis" class="tbl-wrap"><p class="muted">Compute the surfaces to search for them.</p></div>
+    <p class="cap">Searched between neighboring states of the same (2S+1, &Gamma;) block: gap minima on the grid, refined until the gap is below 10<sup>&minus;6</sup> B and kept only if the lower state&rsquo;s eigenvector changes sign around a small loop. Markers (diamonds; open circles on the O<sub>h</sub> axis Ds = Dt = 0) appear when both surfaces are shown; click a row to show them. Pairs degenerate over the whole plane are not cones and are skipped.</p>
+  </section>
+
+  <!-- --------------------------------------------------- 3. ground-state map -->
+  <section class="step" id="gm">
+    <h2><span class="n">3</span> Ground state over (Dq, Ds, Dt)</h2>
+    <div class="optrow">
+      <label>Dq/B from <input id="gm-q0" type="number" step="0.1"> to <input id="gm-q1" type="number" step="0.1"></label>
+      <label>Ds/B from <input id="gm-s0" type="number" step="0.1"> to <input id="gm-s1" type="number" step="0.1"></label>
+      <label>Dt/B from <input id="gm-t0" type="number" step="0.1"> to <input id="gm-t1" type="number" step="0.1"></label>
+      <label>Grid <input id="gm-n" type="number" step="2" min="5" max="41"> per axis</label>
+      <button class="btn primary sm" id="gm-go" type="button">Compute map</button>
+      <progress id="gm-prog" max="1" value="0" hidden></progress>
+    </div>
+    <div class="optrow">
+      <label>Show <select id="gm-view"><option value="both">boundaries and voxels</option><option value="iso">boundaries</option><option value="vox">voxels</option></select></label>
+      <label>Slice through <select id="gm-ax"><option value="q">Dq/B</option><option value="s">Ds/B</option><option value="t">Dt/B</option></select></label>
+      <label class="gm-slider">at <input id="gm-i" type="range" min="0" max="20" step="1"> <span id="gm-iv" class="gm-val"></span></label>
+    </div>
+    <p class="ss-status" id="gm-status">d<sup>n</sup> and C/B are taken from section 1.</p>
+    <div class="gm-grid">
+      <div class="plot"><div id="gm-3d" class="gm-3d"></div></div>
+      <div class="plot"><div id="gm-2d" class="gm-2d"></div></div>
+    </div>
+    <div id="gm-legend" class="gm-legend"></div>
+    <div class="loadrow exp">
+      <button class="btn sm" id="gm-csv" type="button">Download CSV (all voxels)</button>
+      <button class="btn sm" id="gm-png3" type="button">Download PNG (3D)</button>
+      <button class="btn sm" id="gm-png2" type="button">Download PNG (slice)</button>
+    </div>
+    <p class="cap">Each voxel is colored by the lowest (2S+1, &Gamma;) level there; boundaries are the zero isosurfaces of E<sub>&Gamma;</sub> &minus; min over the other blocks. The legend gives each domain&rsquo;s share of the box; its boxes show or hide a domain in the 3D view. Click a voxel or a slice cell to open the fixed-ratio cut through it in section 1 (the dotted line marks its Dq).</p>
+  </section>
+</main>
+
+<footer><div class="wrap"><span>&copy; 2026 Sulaiman AlKadi</span><span>Runs entirely in your browser</span></div></footer>
+
+<script src="https://cdn.jsdelivr.net/npm/plotly.js-dist-min@2.35.2/plotly.min.js" crossorigin="anonymous"></script>
+<script src="ts-d4h/engine.js?v=3"></script>
+<script src="ts-d4h/worker.js?v=4"></script>
+<script src="ts-d4h/app.js?v=10"></script>
+<script src="ts-d4h/surf.js?v=16"></script>
+<script src="ts-d4h/gmap.js?v=6"></script>
+<script data-goatcounter="https://salkadi.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>

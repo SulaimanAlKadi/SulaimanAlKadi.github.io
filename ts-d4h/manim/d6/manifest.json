@@ -1,0 +1,47 @@
+{
+ "name": "d6",
+ "nt": 48,
+ "phis": [
+  48.0,
+  64.0,
+  78.0
+ ],
+ "theta0": -59.99999999999999,
+ "width": 1303,
+ "height": 1008,
+ "legend": [
+  {
+   "label": "<sup>1</sup>A<sub>1g</sub>",
+   "color": "#1baf7a"
+  },
+  {
+   "label": "<sup>5</sup>B<sub>2g</sub>",
+   "color": "#a62e40"
+  },
+  {
+   "label": "<sup>5</sup>E<sub>g</sub>",
+   "color": "#a62e40"
+  },
+  {
+   "label": "<sup>3</sup>E<sub>g</sub> (1)",
+   "color": "#2a78d6"
+  },
+  {
+   "label": "<sup>3</sup>B<sub>2g</sub>",
+   "color": "#2a78d6"
+  },
+  {
+   "label": "<sup>3</sup>A<sub>2g</sub>",
+   "color": "#2a78d6"
+  },
+  {
+   "label": "<sup>5</sup>A<sub>1g</sub>",
+   "color": "#a62e40"
+  },
+  {
+   "label": "<sup>3</sup>E<sub>g</sub> (2)",
+   "color": "#2a78d6"
+  }
+ ],
+ "cones": []
+}

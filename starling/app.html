@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sulaiman AlKadi - Starling app</title>
+<meta name="description" content="Starling: a browser app that corrects femtosecond transient-absorption data for chirp, the coherent artifact, and scattered pump, and fits the kinetics.">
+<link rel="icon" href="../favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="48x48" href="../favicon-48.png">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono&display=swap">
+<style>
+/* Site tokens, carried inline so the page works both inside the website and
+   on its own from the local server. */
+:root{
+  --bar:#efe5dc; --band:#fbf2ea; --paper:#fff; --panel:#f5f5f5;
+  --ink:#3a3a3a; --ink-2:#5f5f5f; --ink-3:#8a8a8a; --rule:#d9d9d9;
+  --heading:#333; --title-faint:#e8b9a4; --link:#8a2536; --accent:#a62e40;
+  --ok:#2e7d55; --warn:#8a5d12; --bad:#a53c2a;
+  --sans:"Lato","Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:"IBM Plex Mono",Consolas,monospace;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);
+  font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:var(--link);text-decoration:none}
+a:hover{text-decoration:underline}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{
+  outline:2px solid var(--accent);outline-offset:2px}
+p{margin:0 0 1em}
+h1,h2,h3{font-family:var(--sans);color:var(--heading);font-weight:700;
+  line-height:1.2;margin:0}
+.wrap{width:min(1100px,calc(100% - 3rem));margin:0 auto}
+.topbar{background:var(--bar);position:sticky;top:0;z-index:10}
+.topbar .wrap{display:flex;justify-content:space-between;align-items:center;
+  height:50px;gap:1rem}
+.topbar .brand{font-family:var(--sans);font-size:1.05rem;color:var(--heading)}
+.topbar nav{display:flex;gap:1.4rem;font-size:.95rem;font-weight:700}
+.topbar nav a{color:var(--heading);padding:14px 0 11px;border-bottom:3px solid transparent}
+.topbar nav a[aria-current="page"]{border-bottom-color:var(--heading)}
+.title-band{background:var(--band);padding:2.6rem 0 2.2rem}
+.title-band .wrap{text-align:right}
+.title-band h1{font-size:3.2rem;color:var(--title-faint);letter-spacing:-.01em}
+.strip{background:var(--panel);padding:1rem 0;font-size:.95rem;color:var(--ink-2)}
+footer{border-top:1px solid var(--rule);margin-top:3rem;padding:1.2rem 0 2.5rem;
+  font-size:.85rem;color:var(--ink-3)}
+footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:.5rem 1.5rem}
+.btn{display:inline-flex;align-items:center;gap:.4rem;padding:.5rem 1rem;
+  border:1px solid var(--rule);border-radius:3px;font-family:var(--sans);
+  font-size:.9rem;font-weight:700;color:var(--heading);background:#fff;cursor:pointer}
+.btn:hover:not(:disabled){border-color:var(--heading)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.primary:hover:not(:disabled){background:var(--link)}
+.btn:disabled{opacity:.5;cursor:default}
+.btn.sm{padding:.3rem .65rem;font-size:.8rem}
+
+/* ---------- step scaffolding ---------- */
+.step{padding:2rem 0 .5rem;border-top:1px solid var(--rule)}
+.step:first-of-type{border-top:0}
+.step>h2{font-size:1.45rem;display:flex;align-items:baseline;gap:.6rem}
+.step>h2 .n{font-family:var(--sans);font-size:.95rem;color:#fff;background:var(--accent);
+  border-radius:3px;padding:.1rem .5rem;line-height:1.5}
+.step>.lede{color:var(--ink-2);font-size:.95rem;margin:.5rem 0 1.1rem;max-width:72ch}
+
+/* ---------- drop zone ---------- */
+#drop{border:2px dashed #cdbfb4;background:var(--band);border-radius:5px;
+  padding:2.2rem 1rem;text-align:center;cursor:pointer;transition:background .12s}
+#drop:hover,#drop.hot{background:#f7e8dc;border-color:var(--accent)}
+#drop b{display:block;font-size:1.1rem;margin-bottom:.3rem;color:var(--heading)}
+#drop span{font-size:.85rem;color:var(--ink-2);font-family:var(--mono)}
+.loadrow{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:.9rem;align-items:center}
+
+/* ---------- tables ---------- */
+table.t{width:100%;border-collapse:collapse;font-size:.9rem;
+  font-variant-numeric:tabular-nums}
+table.t th,table.t td{text-align:left;padding:.42rem .5rem;
+  border-bottom:1px solid var(--rule);vertical-align:top}
+table.t thead th{font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;
+  color:var(--ink-3);font-weight:700}
+table.t td.n,table.t th.n{text-align:right;font-family:var(--mono);font-size:.84rem}
+table.t tr.on td{background:#fdf6f2}
+table.t td.flag{color:var(--accent);font-weight:700}
+.muted{color:var(--ink-3)}
+
+/* ---------- options ---------- */
+.optrow{display:flex;flex-wrap:wrap;gap:.7rem 1.5rem;align-items:center;
+  margin:.4rem 0 1rem}
+.optrow label{font-size:.9rem;color:var(--ink-2);display:inline-flex;
+  align-items:center;gap:.4rem;cursor:pointer}
+.optrow input[type=checkbox],.optrow input[type=radio]{accent-color:var(--accent);
+  width:15px;height:15px;cursor:pointer}
+.optrow input[type=number],.optrow input[type=text],.optrow select{
+  font-family:var(--mono);font-size:.82rem;padding:.25rem .4rem;
+  border:1px solid var(--rule);border-radius:3px;background:#fff}
+.optrow input[type=number]{width:5.5rem}
+.optrow input[type=text]{width:9rem}
+details.adv{margin:.2rem 0 1rem;border:1px solid var(--rule);border-radius:4px;
+  background:var(--panel)}
+details.adv>summary{cursor:pointer;padding:.5rem .8rem;font-size:.85rem;
+  font-weight:700;color:var(--ink-2);list-style:none}
+details.adv>summary::-webkit-details-marker{display:none}
+details.adv>summary:before{content:"\25B8  ";color:var(--ink-3)}
+details.adv[open]>summary:before{content:"\25BE  "}
+details.adv .inner{padding:.2rem .9rem .8rem}
+.help{font-size:.84rem;color:var(--ink-3);margin:-.4rem 0 .9rem;max-width:72ch}
+
+/* ---------- results ---------- */
+.tabs{display:flex;gap:1.4rem;border-bottom:2px solid #e6e6e6;margin-bottom:1.2rem;
+  flex-wrap:wrap}
+.tabs button{background:none;border:0;padding:.5rem 0;font-size:.95rem;
+  font-weight:700;color:var(--ink-3);cursor:pointer;border-bottom:3px solid transparent;
+  margin-bottom:-2px;font-family:var(--sans)}
+.tabs button.on{color:var(--heading);border-bottom-color:var(--accent)}
+.tabs button:disabled{opacity:.4;cursor:default}
+.plot{background:#fff;border:1px solid var(--rule);padding:.4rem;position:relative}
+.plot canvas{display:block;width:100%}
+/* the overlay is sized in script to match the map exactly; it must not
+   stretch to the padded box the way the map canvas does */
+.plot canvas.ov{width:auto;pointer-events:none}
+.cap{font-family:var(--mono);font-size:.74rem;color:var(--ink-3);margin:.5rem 0 1.2rem}
+.grid2{display:grid;grid-template-columns:minmax(0,3fr) minmax(260px,2fr);
+  gap:1.8rem;align-items:start}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:.25rem 1.2rem;font-size:.9rem}
+.kv dt{color:var(--ink-2)}
+.kv dd{margin:0;font-family:var(--mono);font-size:.84rem;text-align:right}
+.note{font-size:.88rem;padding:.5rem .8rem;margin:.5rem 0;border-left:3px solid var(--warn);
+  background:var(--panel);line-height:1.5}
+.note.bad{border-left-color:var(--bad)}
+.note.ok{border-left-color:var(--ok)}
+h3.sec{font-size:1.05rem;margin:1.6rem 0 .7rem}
+h3.sec:first-child{margin-top:0}
+#status{font-family:var(--mono);font-size:.78rem;color:var(--ink-3);
+  min-height:1.3em;margin:.8rem 0 0}
+#bar-outer{height:3px;background:var(--panel);border-radius:2px;overflow:hidden;
+  margin:.5rem 0 0}
+#bar-inner{height:100%;width:0;background:var(--accent);transition:width .2s}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;
+  background:var(--ink-3);margin-right:.45rem;vertical-align:middle}
+.dot.ok{background:var(--ok)} .dot.warn{background:var(--warn)}
+.dot.bad{background:var(--bad)} .dot.busy{background:var(--link)}
+@media (max-width:820px){.grid2{grid-template-columns:1fr}
+  .title-band h1{font-size:2.2rem}}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap">
+    <a class="brand" href="../index.html">Sulaiman AlKadi</a>
+    <nav aria-label="Site">
+      <a href="../index.html">Home</a>
+      <a href="../research.html">Research</a>
+      <a href="../tools.html" aria-current="page">Tools</a>
+      <a href="../cv.html">CV</a>
+    </nav>
+  </div>
+</header>
+
+<section class="title-band"><div class="wrap"><h1>Starling</h1></div></section>
+<div class="strip"><div class="wrap">Correct transient-absorption data and fit its
+kinetics. Drop in the files your spectrometer wrote and it finds time zero at every
+probe wavelength, removes the coherent artifact and scattered pump, and tells you how
+many lifetimes the data actually support. Nothing is uploaded anywhere.</div></div>
+
+<main class="wrap">
+
+  <!-- ---------------------------------------------------------- 1. load -->
+  <section class="step">
+    <h2><span class="n">1</span> Load your data</h2>
+    <p class="lede">Drop one file, several, or a whole folder. Comma or tab separated
+    text from any instrument, Ultrafast Systems <code>.ufs</code>, or <code>.npz</code>.
+    Delays may run down the first column or across the top row; it works out
+    which from the numbers.</p>
+    <div id="drop">
+      <b>Drop files or a folder here</b>
+      <span>.csv &nbsp;.txt &nbsp;.dat &nbsp;.tsv &nbsp;.asc &nbsp;.ufs &nbsp;.npz</span>
+    </div>
+    <div class="loadrow">
+      <button class="btn" id="b-files">Choose files</button>
+      <button class="btn" id="b-folder">Choose a folder</button>
+      <button class="btn" id="b-demo">Try an example series</button>
+      <span style="flex:1"></span>
+      <button class="btn sm" id="b-clear" hidden>Remove all</button>
+    </div>
+    <div id="dswrap" hidden style="margin-top:1.2rem">
+      <table class="t" id="dstable"></table>
+    </div>
+  </section>
+
+  <!-- ------------------------------------------------------- 2. options -->
+  <section class="step" id="step2" hidden>
+    <h2><span class="n">2</span> Choose what to do</h2>
+    <p class="lede">The defaults are the right answer for most data. Open the panels
+    only if you need to change something.</p>
+
+    <div class="optrow">
+      <label><input type="checkbox" id="o-descatter"> Remove scattered pump</label>
+      <label><input type="checkbox" id="o-remove_artifact" checked> Remove the coherent artifact</label>
+      <label><input type="checkbox" id="o-kinetics" checked> Fit lifetimes</label>
+      <label><input type="checkbox" id="o-auto_kinetics" checked> Decide how many lifetimes</label>
+      <label><input type="checkbox" id="o-coherence"> Map vibrational coherence</label>
+      <label><input type="checkbox" id="o-posterior"> Sample the posterior</label>
+    </div>
+
+    <details class="adv">
+      <summary>Chirp and instrument response</summary>
+      <div class="inner">
+        <div class="optrow">
+          <label><input type="radio" name="chirp" value="material" checked> Physical group delay</label>
+          <label><input type="radio" name="chirp" value="poly"> Free polynomial</label>
+          <label>order <input type="number" id="o-poly_order" value="3" min="1" max="7" step="1"></label>
+          <label><input type="checkbox" id="o-refine" checked> Joint refinement</label>
+        </div>
+        <p class="help">The physical model constrains time zero to a real group delay
+        through glass, so it cannot wander where the data are weak. Joint refinement
+        fits the chirp, the instrument response and the lifetimes together, which is
+        what keeps chirp uncertainty inside the lifetime error bars instead of
+        quietly disappearing from them.</p>
+        <div class="optrow">
+          <label>artifact window <input type="number" id="o-window_sigma" value="10" min="3" max="20" step="1"> &sigma;</label>
+          <label><input type="checkbox" id="o-smooth_artifact" checked> Smooth artifact across the probe</label>
+          <label><input type="checkbox" id="o-trim"> Trim delays that fall outside</label>
+        </div>
+      </div>
+    </details>
+
+    <details class="adv">
+      <summary>Scattered pump</summary>
+      <div class="inner">
+        <div class="optrow">
+          <label><input type="checkbox" id="o-pump_manual"> I know the pump wavelength</label>
+          <label>pump <input type="number" id="o-pump_nm" value="400" step="1"> nm</label>
+          <label>line width <input type="number" id="o-pump_fwhm" value="8" step="0.5"> nm</label>
+        </div>
+        <p class="help">Scattered pump is flat in delay and far narrower than any
+        electronic transition, so it can be modeled and subtracted rather than
+        masked out, which gives you back the wavelengths nearest the
+        excitation. If the feature turns out to be too broad to be a laser line,
+        nothing is removed and it says so. Files from Ultrafast Systems usually
+        carry the pump wavelength and it is read automatically.</p>
+      </div>
+    </details>
+
+    <details class="adv">
+      <summary>Lifetimes</summary>
+      <div class="inner">
+        <div class="optrow">
+          <label>component counts to try <input type="text" id="o-orders" value="1,2,3,4"></label>
+          <label>or fix the lifetimes <input type="text" id="o-taus" placeholder="e.g. 0.5, 12"> ps</label>
+        </div>
+        <div class="optrow">
+          <label><input type="checkbox" id="o-infinite" checked> Include a non-decaying component</label>
+          <label><input type="checkbox" id="o-sequential"> Also give sequential spectra (EAS)</label>
+        </div>
+        <p class="help">Choosing the number of exponentials is not really a statistics
+        question, so Starling does not pretend it is. It refits at each count and
+        keeps the largest one whose lifetimes do not move when another component is
+        added. A lifetime shorter than the instrument response is marked and never
+        counted, however well it fits.</p>
+      </div>
+    </details>
+
+    <details class="adv">
+      <summary>Several datasets together</summary>
+      <div class="inner">
+        <div class="optrow">
+          <label><input type="checkbox" id="o-shared_chirp"> One chirp for every dataset</label>
+          <label><input type="checkbox" id="o-shared_kinetics"> One set of lifetimes for every dataset</label>
+        </div>
+        <p class="help">A chirp belongs to the optics, not the sample, so a set of
+        measurements from one sitting should share one curve; fitting each file
+        separately lets the correction drift between samples you mean to compare.
+        For a fluence or titration series, sharing the lifetimes uses the fact that
+        only the amplitudes should change; the spectra stay free for every
+        dataset.</p>
+      </div>
+    </details>
+
+    <details class="adv">
+      <summary>Vibrational coherence</summary>
+      <div class="inner">
+        <div class="optrow">
+          <label>window <input type="number" id="o-coh_lo" value="0.3" step="0.1"> to
+            <input type="number" id="o-coh_hi" value="3" step="0.1"> ps</label>
+          <label>modes <input type="number" id="o-coh_modes" value="5" min="1" max="12" step="1"></label>
+          <label>up to <input type="number" id="o-coh_max" value="1200" step="50"> cm&#8315;&#185;</label>
+          <label>solvent
+            <select id="o-coh_solvent">
+              <option value="">any</option><option>water</option><option>methanol</option>
+              <option>ethanol</option><option>acetonitrile</option><option>acetone</option>
+              <option>dichloromethane</option><option>chloroform</option><option>toluene</option>
+              <option>benzene</option><option>THF</option><option>DMSO</option>
+              <option>cyclohexane</option>
+            </select></label>
+        </div>
+        <p class="help">After the lifetimes are taken out, what is left oscillating
+        is a wavepacket. The amplitude and phase across the probe are what separate
+        a ground-state wavepacket from an excited-state one; a frequency that
+        matches the solvent and shows no structure across the probe is the solvent.
+        The window must sit inside the evenly sampled part of the delay axis, and
+        it will be clipped if it does not.</p>
+      </div>
+    </details>
+
+    <details class="adv">
+      <summary>Posterior sampling</summary>
+      <div class="inner">
+        <div class="optrow">
+          <label>steps <input type="number" id="o-post_steps" value="700" min="200" max="5000" step="100"></label>
+          <label><input type="radio" name="scheme" value="parallel" checked> parallel</label>
+          <label><input type="radio" name="scheme" value="sequential"> sequential</label>
+        </div>
+        <p class="help">Variable projection gives one optimum and a quadratic
+        approximation around it. Sampling instead gives the shape: intervals that
+        can be asymmetric, the correlation that shows when two rates are really one
+        parameter, and a credible band on each species spectrum. Parallel and
+        sequential schemes with the same rates fit identically, so the choice
+        changes what the spectra mean, not how well it fits.</p>
+      </div>
+    </details>
+
+    <details class="adv">
+      <summary>Diagnostics</summary>
+      <div class="inner">
+        <div class="optrow">
+          <label><input type="checkbox" id="o-uncertainty" checked> Error bars on the fitted parameters</label>
+          <label><input type="checkbox" id="o-svd" checked> Count components from the decomposition</label>
+        </div>
+      </div>
+    </details>
+
+    <div class="loadrow">
+      <button class="btn primary" id="b-run" style="padding:.6rem 1.4rem;font-size:1rem">
+        Correct everything</button>
+      <span class="muted" id="runhint" style="font-size:.85rem"></span>
+    </div>
+    <div id="bar-outer"><div id="bar-inner"></div></div>
+    <p id="status">Ready.</p>
+  </section>
+
+  <!-- --------------------------------------------------- 3. fit kinetics -->
+  <section class="step" id="stepfit" hidden>
+    <h2><span class="n">3</span> Fit exponentials</h2>
+    <p class="lede">Fits a set of lifetimes shared across the whole probe, and
+      will work out how many the data support rather than being told. This runs
+      on its own, so the number of components can be changed without redoing
+      the chirp, which is the slow part.</p>
+
+    <div class="optrow" style="margin-bottom:.4rem">
+      <label>dataset <select id="f-set"></select></label>
+    </div>
+
+    <div class="optrow">
+      <label><input type="radio" name="fitmode" value="auto" checked>
+        Work out how many exponentials</label>
+      <label><input type="radio" name="fitmode" value="n"> Use exactly
+        <input type="number" id="f-n" value="2" min="1" max="6" step="1"></label>
+      <label><input type="radio" name="fitmode" value="taus"> Start from
+        <input type="text" id="f-taus" placeholder="0.5, 12" size="10"> ps</label>
+    </div>
+
+    <details class="adv">
+      <summary>How many, and what counts as resolvable</summary>
+      <div class="inner">
+        <div class="optrow">
+          <label>try up to <input type="number" id="f-max" value="4" min="1"
+            max="6" step="1"> components</label>
+          <label>instrument response <input type="number" id="f-irf"
+            placeholder="auto" step="10" size="6"> fs FWHM</label>
+        </div>
+        <p class="help">The instrument response decides this answer as much as
+        the data do: a lifetime shorter than twice its sigma is the response
+        itself, and is never counted however well it fits. It is a property of
+        your instrument rather than something the map can be asked, because a
+        wider response and a faster decay describe the same rise. Leave it
+        blank and it comes from the chirp fit, or from a stated default on a
+        map that arrived already corrected. If the answer below says
+        nothing is supportable, this is usually why.</p>
+        <div class="optrow">
+          <label><input type="checkbox" id="f-infinite" checked>
+            Include a non-decaying component</label>
+          <label><input type="checkbox" id="f-sequential">
+            Also give sequential spectra (EAS)</label>
+        </div>
+        <p class="help">Almost every map has something outliving the window. A
+        model without a species for it stretches its longest lifetime to cover
+        it and reports that with a tight error bar.</p>
+      </div>
+    </details>
+
+    <details class="adv">
+      <summary>What to fit it to</summary>
+      <div class="inner">
+        <div class="optrow">
+          <label>chirp
+            <select id="f-chirp">
+              <option value="auto">work out what this map needs</option>
+              <option value="fit">fit and remove one</option>
+              <option value="already">already corrected, leave it</option>
+            </select></label>
+          <label><input type="checkbox" id="f-artifact" checked>
+            Remove the coherent artifact</label>
+        </div>
+        <p class="help">On <em>work out what this map needs</em> each option is
+        tried on a thinned copy and kept or discarded by how flat time zero
+        ends up, which is the job the correction exists to do. A map that
+        arrives corrected is left alone: straightening it again would only
+        smear it.</p>
+        <div class="optrow">
+          <label>delays from <input type="number" id="f-dlo" placeholder="all"
+            step="0.1" size="6"> to <input type="number" id="f-dhi"
+            placeholder="all" step="0.1" size="6"> ps</label>
+          <label>probe from <input type="number" id="f-wlo" placeholder="all"
+            step="1" size="6"> to <input type="number" id="f-whi"
+            placeholder="all" step="1" size="6"> nm</label>
+        </div>
+        <p class="help">Worth narrowing when part of the probe is dead, or when
+        scattered pump sits in the window.</p>
+      </div>
+    </details>
+
+    <div class="loadrow" style="margin-top:1rem">
+      <button class="btn primary" id="b-fit"
+        style="padding:.6rem 1.4rem;font-size:1rem">Fit</button>
+      <span class="muted" id="fithint" style="font-size:.85rem"></span>
+    </div>
+    <div id="fitout" style="margin-top:1.1rem"></div>
+  </section>
+
+  <!-- ----------------------------------------------------- 4. results -->
+  <section class="step" id="step3" hidden>
+    <h2><span class="n">4</span> Results</h2>
+    <div class="tabs" id="tabs"></div>
+    <div id="pane-map"></div>
+    <div id="pane-kin" hidden></div>
+    <div id="pane-comp" hidden></div>
+    <div id="pane-series" hidden></div>
+    <div id="pane-coh" hidden></div>
+    <div id="pane-post" hidden></div>
+    <div id="pane-fluence" hidden></div>
+    <div id="pane-report" hidden></div>
+  </section>
+
+  <section class="step" id="howto">
+    <h2>What it does</h2>
+    <div class="grid2">
+      <div>
+        <p>In ultrafast experiments, white-light probes are chirped by the material they pass through, such as the quartz windows of the sample cuvette. This gives every wavelength its own time zero. Most transient-absorption analysis programs leave chirp correction to the user, who drags a crude set of points through the surface by eye. This takes valuable time away from researchers, and it also leads to meaningful differences in the extracted data, particularly in the kinetics. Starling fits time zero at every wavelength at once, constrained to a physical group delay, and then removes the coherent artifact on the raw grid before any resampling. Resampling first would smear the artifact across delay bins and leave a residue that nothing can remove afterward. The chirp, the instrument response, and the lifetimes are refined together, so the uncertainty in time zero stays inside the error bar on your fastest lifetime instead of vanishing from it. Importantly, poor fits are flagged: across a validation set of 40 simulated experiments, every run whose time-zero error exceeded 25% of the instrument-response width raised a warning, so the user knows to inspect it more closely.</p>
+      </div>
+      <div>
+        <h3 class="sec">Measured against</h3>
+        <dl class="kv">
+          <dt>time-zero error, median</dt><dd>5.7 fs</dd>
+          <dt>as a share of the response</dt><dd>2.0%</dd>
+          <dt>bad runs that were flagged</dt><dd>100%</dd>
+          <dt>lifetime error bars</dt><dd>calibrated to 1.03</dd>
+        </dl>
+        <p class="cap" style="margin-top:.9rem">Scored over 40 randomly drawn
+        experiments against known ground truth, and run end to end on measured
+        carotenoid and WS&#8322; data from two open archives.</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer><div class="wrap"><span>&copy; 2026 Sulaiman AlKadi</span>
+<span>Runs entirely on your machine</span></div></footer>
+
+<script src="starling_src.js"></script>
+<script src="engine.js"></script>
+<script src="bridge.js"></script>
+<script src="app.js?v=2"></script>
+<script data-goatcounter="https://salkadi.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>

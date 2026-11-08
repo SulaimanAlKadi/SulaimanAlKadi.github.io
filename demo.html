@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sulaiman AlKadi - SuperSpinner</title>
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="48x48" href="favicon-48.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="description" content="SuperSpinner: a neural network that reads spin-Hamiltonian parameters from a CW-EPR spectrum, running in the browser. Try it on held-out spectra or upload your own.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono&display=swap">
+<link rel="stylesheet" href="style.css?v=11">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap">
+    <a class="brand" href="index.html">Sulaiman AlKadi</a>
+    <nav aria-label="Site">
+      <a href="index.html">Home</a>
+      <a href="research.html">Research</a>
+      <a href="tools.html" aria-current="page">Tools</a>
+      <a href="cv.html">CV</a>
+    </nav>
+  </div>
+</header>
+
+<section class="title-band"><div class="wrap"><h1>SuperSpinner</h1></div></section>
+<div class="strip"><div class="wrap">Extracting spin Hamiltonian parameters for an S&nbsp;=&nbsp;½ system from a CW-EPR spectrum is often a labor- and computationally intensive task. SuperSpinner extracts the g and hyperfine tensors, with uncertainties, directly from a CW-EPR spectrum in less than a second. The program also identifies the central nucleus, the species family, linewidths and strains, and secondary species in a single pass. The network runs locally in your browser, and no data is uploaded or saved anywhere. Give the demo a try!</div></div>
+
+<main class="wrap">
+
+  <!-- ---------------------------------------------------------- 1. demo -->
+  <section class="step" id="ss-demo">
+    <h2><span class="n">1</span> See it work</h2>
+    <p class="lede">When training a neural network, one splits the dataset into a training set and a test set; because the model never sees the test set during training, the test set is what is used to assess its accuracy. Crucially, because this model is trained (mostly) on ideal synthetic spectra generated with EasySpin, it would not, on its own, learn to handle the problems that come with real measurements. The solution is to degrade the synthetic data deliberately. Here, this is done by choosing a random sweep window and point density and by adding noise (down to a signal-to-noise ratio of 2), drift, linear and nonlinear baselines, spikes, and broad background features. All of these are added on top of each simulated spectrum, which makes the training more robust. Mess around with the model yourself below!</p>
+    <div class="loadrow">
+      <button class="btn primary ss-start" type="button">Start (loads about 15 MB)</button>
+      <button class="btn primary ss-new" type="button" hidden>New random spectrum</button>
+      <button class="btn ss-auto" type="button" hidden>Auto-run</button>
+    </div>
+    <div class="optrow">
+      <label><input type="checkbox" class="ss-hint" disabled> Tell it which metal</label>
+      <label><input type="checkbox" class="ss-fit" checked disabled> Overlay the reconstruction</label>
+    </div>
+    <p class="ss-status">Not started. The network and a bank of spectra download when you press start; the runtime comes from a CDN, so an internet connection is needed.</p>
+    <div class="grid2">
+      <div>
+        <div class="plot"><canvas class="ss-canvas"></canvas></div>
+        <p class="cap ss-note"></p>
+        <p class="cap ss-time"></p>
+      </div>
+      <div>
+        <table class="t ss-table">
+          <thead><tr><th>Parameter</th><th>Truth (EasySpin)</th><th>SuperSpinner</th></tr></thead>
+          <tbody><tr><td colspan="3" class="muted">Press start to run the first fit.</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- -------------------------------------------------------- 2. upload -->
+  <section class="step" id="ss-upload">
+    <h2><span class="n">2</span> Upload your own spectra</h2>
+    <p class="lede">Drop a continuous-wave spectrum from your spectrometer. Bruker BES3T (<code>.DSC</code> + <code>.DTA</code>), Bruker ESP/WinEPR (<code>.par</code> + <code>.spc</code>) or two-column text with field and intensity. The microwave frequency and modulation amplitude are read from the file when it carries them. The file is read in this tab and never leaves your computer.</p>
+    <div class="dropzone" id="up-drop">
+      <b>Drop files here</b>
+      <span>.DSC + .DTA &nbsp;·&nbsp; .par + .spc &nbsp;·&nbsp; .txt &nbsp;.csv &nbsp;.dat &nbsp;.asc</span>
+      <input type="file" id="up-files" multiple accept=".dsc,.dta,.xgf,.par,.spc,.txt,.csv,.dat,.asc,.tsv" hidden>
+    </div>
+    <div class="loadrow">
+      <button class="btn" id="up-choose" type="button">Choose files</button>
+      <button class="btn" id="up-example" type="button">Try an example file</button>
+      <span style="flex:1"></span>
+      <button class="btn primary" id="up-run" type="button" disabled>Analyze</button>
+    </div>
+    <div class="optrow">
+      <label>Microwave frequency <input id="up-nu" type="number" step="0.0001" min="1" placeholder="GHz"> GHz</label>
+      <label>Modulation amplitude <input id="up-ma" type="number" step="0.01" min="0" placeholder="optional"> mT</label>
+      <label>Field unit in text files <select id="up-unit"><option value="">auto</option><option value="G">G</option><option value="mT">mT</option><option value="T">T</option></select></label>
+      <label>Central nucleus <select id="up-nuc"><option value="">let the network decide</option></select></label>
+      <label><input type="checkbox" id="up-tta" checked> Average 8 field-shifted passes</label>
+    </div>
+    <p class="ss-status" id="up-status">No file loaded.</p>
+    <div class="grid2">
+      <div>
+        <div class="plot"><canvas class="ss-canvas" id="up-canvas"></canvas></div>
+        <p class="cap" id="up-note"></p>
+        <div class="optrow"><label><input type="checkbox" id="up-fit" checked> Overlay a first-order reconstruction from the prediction</label></div>
+      </div>
+      <div>
+        <table class="t ss-table" id="up-table">
+          <thead><tr><th>Parameter</th><th>SuperSpinner</th></tr></thead>
+          <tbody><tr><td colspan="2" class="muted">Load a spectrum and press Analyze.</td></tr></tbody>
+        </table>
+        <div id="up-notes"></div>
+        <details class="adv" id="up-es" hidden>
+          <summary>EasySpin starting point (Sys / Vary)</summary>
+          <div class="inner"><pre id="up-es-text"></pre><button class="btn sm" id="up-copy" type="button">Copy</button></div>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ------------------------------------------------------- 3. how -->
+  <section class="step">
+    <h2><span class="n">3</span> How it works</h2>
+    <p class="lede">A one-dimensional ResNet with dilated convolutions feeds two Transformer layers and a set of multi-task heads. The g turning points and the outer hyperfine lines are localized by keypoint heatmaps decoded with a soft-argmax, which gives sub-pixel field positions where direct regression plateaus; direct regression heads supply the remaining parameters and serve as the fallback when a line falls outside the measured window. The training set is 60,000 EasySpin simulations of S&nbsp;=&nbsp;½ centers drawn from eight chemically informed prior families, mixed on the fly with secondary species and measurement artifacts. On 3,000 held-out spectra the median error in g is 0.003 and the central nucleus is identified blind three times out of four. The prediction is also a good starting point for a conventional EasySpin refinement.</p>
+  </section>
+</main>
+
+<footer><div class="wrap"><span>© 2026 Sulaiman AlKadi</span><span>Runs entirely in your browser</span></div></footer>
+
+<pre id="ss-log" hidden></pre>
+<script src="superspinner/demo.js?v=5"></script>
+<script src="superspinner/upload.js?v=5"></script>
+<script data-goatcounter="https://salkadi.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>

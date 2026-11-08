@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sulaiman AlKadi</title>
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="48x48" href="favicon-48.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="description" content="Sulaiman AlKadi, chemistry undergraduate at Caltech: spectroscopy of spin and electron transfer in molecules, and software for reading spectra.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono&display=swap">
+<link rel="stylesheet" href="style.css?v=11">
+<script>
+/* Decide before the first paint whether the opening cover runs: once per session, never with reduced motion. */
+(function(){ try {
+  var force = /[?&]intro(=|&|$)/.test(location.search);
+  if (!force && (sessionStorage.getItem("cover-seen") || matchMedia("(prefers-reduced-motion: reduce)").matches)) return;
+  document.documentElement.classList.add("cover-on");
+} catch (e) {} })();
+</script>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap">
+    <a class="brand" href="index.html">Sulaiman AlKadi</a>
+    <nav aria-label="Site">
+      <a href="index.html" aria-current="page">Home</a>
+      <a href="research.html">Research</a>
+      <a href="tools.html">Tools</a>
+      <a href="cv.html">CV</a>
+    </nav>
+  </div>
+</header>
+
+<div id="cover" aria-label="Opening animation">
+  <canvas aria-hidden="true"></canvas>
+  <div class="cover-text">
+    <h1>Sulaiman AlKadi</h1>
+    <p><b>Far-from-equilibrium electron transfer.</b> In the Belousov–Zhabotinsky reaction, electron transfer enables cycling between orange-red [Fe(bpy)<sub>3</sub>]<sup>2+</sup> and blue [Fe(bpy)<sub>3</sub>]<sup>3+</sup> via an autocatalytic delayed feedback process, which causes this reaction network to function as a nonlinear chemical oscillator, driven by the free energy of malonic acid oxidation with bromate. <span class="fine">Move your cursor or click to disturb the reaction.</span><span class="coarse">Tap to start a wave.</span></p>
+  </div>
+  <div class="cover-foot"><button class="cover-enter" type="button">Enter<span class="bar"><i></i></span></button></div>
+</div>
+
+<section class="home-band">
+  <div class="wrap">
+    <div class="who">
+      <div class="disc">
+        <img class="portrait" src="photo.jpg" alt="Sulaiman AlKadi"
+             onerror="this.remove()">
+      </div>
+      <h1>Sulaiman AlKadi</h1>
+      <p class="line">Undergraduate researcher</p>
+      <p class="line"><a href="https://www.cce.caltech.edu/">California Institute of Technology</a></p>
+      <p class="line">Hadt Laboratory</p>
+    </div>
+    <div class="greet">
+      <h2>Hello, there</h2>
+      <p>I am a senior in chemistry at Caltech, focusing on experimental physical chemistry, particularly spectroscopy, and I am also interested in electronic structure methods and scientific programming.</p>
+      <p>I am applying to graduate programs in chemistry, chemical physics, and quantum science &amp; engineering, as well as other research positions. If you have an opportunity you would like to discuss or want to reach out, email is the easiest way to reach me.</p>
+      <p><span class="email-stack"><span class="email-reveal" data-email="idakla.w.namialus|moc.liamg" tabindex="0"><span class="label">Show email</span><a class="addr" href="#">&nbsp;</a></span><span class="email-reveal" data-email="namialus|ude.hcetlac" tabindex="0"><span class="label">Show email</span><a class="addr" href="#">&nbsp;</a></span></span></p>
+    </div>
+  </div>
+</section>
+
+<div class="social" aria-label="Links">
+  <a href="#" data-email="idakla.w.namialus|moc.liamg" title="Email" aria-label="Email"><svg viewBox="0 0 24 24"><path d="M2 5h20v14H2zm2 2v.5l8 5 8-5V7l-8 5z"/></svg></a>
+  <a href="https://github.com/Sulaimaninator" title="GitHub" aria-label="GitHub"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-3.2 19.5c.5.1.7-.2.7-.5v-1.8c-2.8.6-3.4-1.2-3.4-1.2-.4-1.1-1.1-1.5-1.1-1.5-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.6 2.4 1.1 3 .9.1-.7.4-1.1.6-1.4-2.2-.3-4.6-1.1-4.6-5 0-1.1.4-2 1-2.7-.1-.2-.4-1.2.1-2.6 0 0 .9-.3 2.8 1a9.6 9.6 0 0 1 5 0c1.9-1.3 2.8-1 2.8-1 .5 1.4.2 2.4.1 2.6.6.7 1 1.6 1 2.7 0 3.9-2.4 4.7-4.6 5 .4.3.7.9.7 1.9v2.8c0 .3.2.6.7.5A10 10 0 0 0 12 2z"/></svg></a>
+  <a href="cv.html" title="CV" aria-label="CV">CV</a>
+</div>
+
+<main class="wrap">
+  <div class="two">
+    <div>
+      <h2>Research Interests</h2>
+      <ul>
+        <li><a href="research.html#spectroscopy">Ultrafast and magnetic-resonance spectroscopy</a></li>
+        <li><a href="research.html#electronic-structure">Electronic structure of excited states and exotic molecules</a></li>
+        <li><a href="research.html#dynamics">Photochemical and electron-transfer dynamics</a></li>
+      </ul>
+    </div>
+    <div>
+      <h2>Education</h2>
+      <ul class="edu">
+        <li>🎓 <b>B.S., Chemistry, expected 2027</b><small>California Institute of Technology, USA (Advisor: Ryan G. Hadt)</small><small>Senior thesis: “Ultrafast Spin Dynamics in Tungsten and Molybdenum Complexes Relevant to Tungsto- and Molybdoenzymes”</small></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="labelled">
+    <h2>Selected Awards</h2>
+    <ul>
+      <li><b>John A. Stauffer SURF Fellowship</b><small>Twice, in the Gray and Hadt Laboratories · 2024, 2026</small></li>
+      <li><b>Ronan Armaan Mack SURF Fellowship</b><small>Nocera Laboratory, Harvard · 2025</small></li>
+      <li><b>KAUST Gifted Student Program (KGSP) Scholar</b><small>Full-tuition scholarship from King Abdullah University of Science and Technology, awarded to a select few Saudi students to study science at the world’s leading universities · 2023</small></li>
+    </ul>
+  </div>
+
+  <div class="labelled">
+    <h2>Talks and Posters</h2>
+    <ul>
+      <li><b>All-Optical Spin Coherence in an Axial Tungsten(V) System of Relevance to the Active Sites of Tungstoenzymes</b><small>SURF talk, Caltech · Aug 2026</small></li>
+      <li><b>Ultrafast Photophysics (and Photochemistry) of a Thioxanthone Dimer</b><small>SURF talk, Caltech · Oct 2025</small></li>
+      <li><b>Development of One- and Two-Photon Radical Sensitizers</b><small>SURF talk, Caltech · Oct 2024</small></li>
+    </ul>
+  </div>
+</main>
+
+<footer><div class="wrap"><span>© 2026 Sulaiman AlKadi</span><span>Pasadena, California</span></div></footer>
+<script src="cover.js?v=2"></script>
+<script src="email.js?v=1"></script>
+<script data-goatcounter="https://salkadi.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>
