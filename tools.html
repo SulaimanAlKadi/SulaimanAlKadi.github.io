@@ -36,7 +36,7 @@
     <div>
       <h2>SuperSpinner</h2>
       <div class="meta">Python, PyTorch, MATLAB/EasySpin<br>Neural-network spin-Hamiltonian extraction</div>
-      <div class="links"><a class="live" href="demo.html">Open the app</a><a href="#" data-email="idakla.w.namialus|moc.liamg" data-subject="SuperSpinner">Code on request</a></div>
+      <div class="links"><a data-goatcounter-click="open-superspinner" class="live" href="demo.html">Open the app</a><a data-goatcounter-click="superspinner-code-request" href="#" data-email="idakla.w.namialus|moc.liamg" data-subject="SuperSpinner">Code on request</a></div>
     </div>
     <div class="body">
       <p>Extracting spin Hamiltonian parameters (g-values, hyperfine interactions, linewidths, etc.) from a continuous-wave EPR spectrum is often a labor-intensive manual search, particularly for low-symmetry rhombic systems with various nuclear spins or for samples with multiple EPR-active species. Typically, fitting a CW-EPR spectrum requires iterative guessing, simulation, comparison, and adjustment to accurately determine the parameters of interest. Automatic fitting with programs like EasySpin also requires starting points close to the true parameters; a fit stuck in a local minimum of the fitting landscape rarely recovers without more manual iteration. SuperSpinner replaces the search with a single forward pass. Here, a one-dimensional ResNet feeds a small Transformer and a set of multi-task heads that return the g and hyperfine tensors with calibrated uncertainties, the identity of the central nucleus, the species family, the linewidths and strains, and the presence and spin fraction of common secondary species. The g turning points and the outer hyperfine lines are localized by keypoint heatmaps decoded with a soft-argmax, which gives sub-pixel field positions where direct regression plateaus.</p>
@@ -49,7 +49,7 @@
     <div>
       <h2>Starling</h2>
       <div class="meta">Python (NumPy, SciPy) · 182 tests<br>Transient-absorption pipeline: chirp, artifact, denoising, global analysis, a local GUI</div>
-      <div class="links"><a class="live" href="starling/app.html">Open the app</a><a href="#" data-email="idakla.w.namialus|moc.liamg" data-subject="Starling">Code on request</a></div>
+      <div class="links"><a data-goatcounter-click="open-starling" class="live" href="starling/app.html">Open the app</a><a data-goatcounter-click="starling-code-request" href="#" data-email="idakla.w.namialus|moc.liamg" data-subject="Starling">Code on request</a></div>
     </div>
     <div class="body">
       <p>Femtosecond transient-absorption surfaces require manual corrections that most commercial software systems leave to the user. When the white-light probe is chirped, each wavelength has its own time zero, and the coherent artifact around it is usually cropped by eye. However, this can lead to substantial inconsistencies in measurements and difficulties with reproducibility, particularly for lifetimes closer to the temporal limit of the instrument. For this reason, and out of my own desire to streamline experiments, I built Starling, which automates the whole front end. A matched-filter scan fits every wavelength against the instrument-response function and its derivatives over a grid of trial time zeros. Time zero is then modeled as the group delay through real optical materials with a three-parameter Sellmeier fit, and chirp, instrument response, and lifetimes are refined jointly by variable projection so that the chirp uncertainty carries through to the kinetics. The artifact is subtracted on the raw grid before the map is resampled onto a common time axis.</p>
@@ -62,7 +62,7 @@
     <div>
       <h2>D<sub>4h</sub> Tanabe&ndash;Sugano</h2>
       <div class="meta">JavaScript, Plotly<br>Term diagrams for d<sup>1</sup>&ndash;d<sup>9</sup> ions in tetragonal ligand fields</div>
-      <div class="links"><a class="live" href="tanabe-sugano.html">Open the app</a></div>
+      <div class="links"><a data-goatcounter-click="open-tanabe-sugano" class="live" href="tanabe-sugano.html">Open the app</a></div>
     </div>
     <div class="body">
       <p>Tanabe&ndash;Sugano diagrams are standard tools for analyzing and interpreting the ligand-field spectra of transition-metal complexes. These diagrams are two-dimensional plots of the energy of each state against Dq/B (or &Delta;/B), which serves as a proxy for ligand-field strength. Notably, Tanabe and Sugano&rsquo;s original treatment, as well as the conventional textbook diagrams, can only account for perfectly octahedral fields, which are rare. Most often, complexes are distorted away from ideal octahedra in a number of ways. One such distortion occurs in tetragonal fields, where the axial and equatorial ligands differ. In these fields, the energy expressions depend not only on Dq but also on two other parameters, Ds and Dt. These radial parameters encode the difference between the axial and equatorial ligand fields. When these additional parameters are included, the diagrams become much more complex, as one now needs (at least) a three-dimensional plot to capture the equivalent Tanabe&ndash;Sugano expressions. The motivation for this program started when I was thinking of ways to accurately describe the electronic spectra and excited states of tetracyanonickelate(II) and realized that a square-planar analogue of a Tanabe&ndash;Sugano diagram would be awfully convenient.</p>
@@ -75,7 +75,7 @@
     <div>
       <h2>PyEasySpin</h2>
       <div class="meta">Python 3.11+, NumPy, Numba · MIT<br>Work in progress<br>Unofficial Python port of EasySpin 6.0.12</div>
-      <div class="links"><a href="https://github.com/Sulaimaninator/pyeasyspin">GitHub</a><a href="https://pypi.org/project/pyeasyspin/">PyPI</a></div>
+      <div class="links"><a data-goatcounter-click="pyeasyspin-github" href="https://github.com/Sulaimaninator/pyeasyspin">GitHub</a><a data-goatcounter-click="pyeasyspin-pypi" href="https://pypi.org/project/pyeasyspin/">PyPI</a></div>
     </div>
     <div class="body">
       <p>EasySpin is the standard MATLAB toolbox for simulating and fitting EPR spectra. However, using MATLAB for this is often very slow due to limited parallelization, and it also limits the ability to interface these fits with other statistical analysis or plotting packages. I am currently working on implementing an unofficial Python version of EasySpin covering solid-state, isotropic, slow-motion, and pulse simulations, along with the spin Hamiltonian and isotope utilities. I intend to update this section as I make more progress.</p>
@@ -84,7 +84,7 @@
 
 </main>
 
-<footer><div class="wrap"><span>© 2026 Sulaiman AlKadi</span><span><span class="email-stack"><span class="email-reveal" data-email="idakla.w.namialus|moc.liamg" tabindex="0"><span class="label">Show email</span><a class="addr" href="#">&nbsp;</a></span><span class="email-reveal" data-email="namialus|ude.hcetlac" tabindex="0"><span class="label">Show email</span><a class="addr" href="#">&nbsp;</a></span></span></span></div></footer>
+<footer><div class="wrap"><span>© 2026 Sulaiman AlKadi</span><span><span class="email-stack"><span data-goatcounter-click="show-email" class="email-reveal" data-email="idakla.w.namialus|moc.liamg" tabindex="0"><span class="label">Show email</span><a class="addr" href="#">&nbsp;</a></span><span data-goatcounter-click="show-email" class="email-reveal" data-email="namialus|ude.hcetlac" tabindex="0"><span class="label">Show email</span><a class="addr" href="#">&nbsp;</a></span></span></span></div></footer>
 <script src="email.js?v=1"></script>
 <script data-goatcounter="https://salkadi.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </body>

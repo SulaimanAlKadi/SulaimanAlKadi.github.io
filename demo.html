@@ -37,7 +37,7 @@
     <h2><span class="n">1</span> See it work</h2>
     <p class="lede">When training a neural network, one splits the dataset into a training set and a test set; because the model never sees the test set during training, the test set is what is used to assess its accuracy. Crucially, because this model is trained (mostly) on ideal synthetic spectra generated with EasySpin, it would not, on its own, learn to handle the problems that come with real measurements. The solution is to degrade the synthetic data deliberately. Here, this is done by choosing a random sweep window and point density and by adding noise (down to a signal-to-noise ratio of 2), drift, linear and nonlinear baselines, spikes, and broad background features. All of these are added on top of each simulated spectrum, which makes the training more robust. Mess around with the model yourself below!</p>
     <div class="loadrow">
-      <button class="btn primary ss-start" type="button">Start (loads about 15 MB)</button>
+      <button data-goatcounter-click="superspinner-start" class="btn primary ss-start" type="button">Start (loads about 15 MB)</button>
       <button class="btn primary ss-new" type="button" hidden>New random spectrum</button>
       <button class="btn ss-auto" type="button" hidden>Auto-run</button>
     </div>
@@ -72,9 +72,9 @@
     </div>
     <div class="loadrow">
       <button class="btn" id="up-choose" type="button">Choose files</button>
-      <button class="btn" id="up-example" type="button">Try an example file</button>
+      <button data-goatcounter-click="superspinner-example-file" class="btn" id="up-example" type="button">Try an example file</button>
       <span style="flex:1"></span>
-      <button class="btn primary" id="up-run" type="button" disabled>Analyze</button>
+      <button data-goatcounter-click="superspinner-analyze" class="btn primary" id="up-run" type="button" disabled>Analyze</button>
     </div>
     <div class="optrow">
       <label>Microwave frequency <input id="up-nu" type="number" step="0.0001" min="1" placeholder="GHz"> GHz</label>
